@@ -6,14 +6,21 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/js/all.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Khmer&family=Siemreap&display=swap" rel="stylesheet">
     <title>Application Form</title>
+    <style>
+        body {
+            font-family: 'Khmer', sans-serif;
+        }
+    </style>
 </head>
 <body class="p-6 bg-gray-100">
     <div class="max-w-2xl mx-auto bg-white p-6 rounded-lg shadow-md">
-        <h2 class="text-xl font-bold mb-4">Form Daily Work KHA</h2>
-        <input id="name" type="text" placeholder="Name" class="w-full p-2 border rounded mb-2">
-        <textarea id="responsibility" placeholder="Responsibility" class="w-full p-2 border rounded mb-2"></textarea>
-        <input id="other" type="text" placeholder="Other (Optional)" class="w-full p-2 border rounded mb-2">
+        <h2 class="text-xl font-bold mb-4 text-center "><i class="fas fa-file-alt"></i> តារាងវេនសម្ភាត</h2>
+        <input id="name" type="text" placeholder="ឈ្មោះ" class="w-full p-2 border rounded mb-2">
+        <textarea id="responsibility" placeholder="តួនាទី​" class="w-full p-2 border rounded mb-2"></textarea>
+        <input id="other" type="text" placeholder="ផ្សេង (Optional)" class="w-full p-2 border rounded mb-2">
         <button onclick="addRow()" class="w-full bg-blue-500 text-white p-2 rounded">Create</button>
         <p id="message" class="text-red-500 mt-2 hidden">ឈ្មោះនេះមានរួចហើយ</p>
     </div>
@@ -22,19 +29,19 @@
             <table class="w-full bg-white rounded shadow-md text-left border border-gray-300">
                 <thead>
                     <tr class="bg-gray-200 text-lg border-b">
-                        <th class="p-4 border">ID</th>
-                        <th class="p-4 border">Name</th>
-                        <th class="p-4 border">Responsibility</th>
-                        <th class="p-4 border">Other</th>
-                        <th class="p-4 border">Actions</th>
+                        <th class="p-4 border">លេខរៀង</th>
+                        <th class="p-4 border">ឈ្មោះ</th>
+                        <th class="p-4 border">តួនាទី</th>
+                        <th class="p-4 border">ផ្សេង</th>
+                        <th class="p-4 border">កែប្រែ</th>
                     </tr>
                 </thead>
                 <tbody id="tableBody"></tbody>
             </table>
         </div>
         <div class="mt-4 flex gap-2">
-            <button onclick="downloadImage()" class="bg-green-500 text-white p-2 rounded">Download Image</button>
-            <button onclick="downloadPDF()" class="bg-red-500 text-white p-2 rounded">Download PDF</button>
+            <button onclick="downloadImage()" class="bg-green-500 text-white p-2 rounded">ទាញយកជា​ Image</button>
+            <button onclick="downloadPDF()" class="bg-red-500 text-white p-2 rounded">ទាញយកជា PDF</button>
         </div>
     </div>
     <script>
