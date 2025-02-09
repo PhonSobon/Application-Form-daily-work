@@ -17,7 +17,7 @@
 </head>
 <body class="p-6 bg-gray-100">
     <div class="max-w-2xl mx-auto bg-white p-6 rounded-lg shadow-md">
-        <h2 class="text-xl font-bold mb-4 text-center "><i class="fas fa-file-alt"></i> តារាងវេនសម្ភាត</h2>
+        <h2 class="text-2xl font-bold mb-4 text-center "><i class="fas fa-file-alt"></i> តារាងវេនសម្ភាត</h2>
         <input id="name" type="text" placeholder="ឈ្មោះ" class="w-full p-2 border rounded mb-2">
         <textarea id="responsibility" placeholder="តួនាទី​" class="w-full p-2 border rounded mb-2"></textarea>
         <input id="other" type="text" placeholder="ផ្សេង (Optional)" class="w-full p-2 border rounded mb-2">
@@ -40,8 +40,8 @@
             </table>
         </div>
         <div class="mt-4 flex gap-2">
-            <button onclick="downloadImage()" class="bg-green-500 text-white p-2 rounded">ទាញយកជា​ Image</button>
-            <button onclick="downloadPDF()" class="bg-red-500 text-white p-2 rounded">ទាញយកជា PDF</button>
+            <button onclick="downloadImage()" class="bg-green-500 text-white p-2 rounded"><i class="fas fa-download"></i>ទាញយកជា​ Image</button>
+            <button onclick="downloadPDF()" class="bg-red-500 text-white p-2 rounded"><i class="fas fa-file-pdf"></i> ទាញយកជា PDF</button>
         </div>
     </div>
     <script>
@@ -70,8 +70,8 @@
                              <td class='p-4 border whitespace-pre-wrap'>${responsibility}</td>
                              <td class='p-4 border'>${other}</td>
                              <td class='p-4 border'>
-                                <button onclick="editRow(this)" class='text-blue-500'>Edit</button>
-                                <button onclick="deleteRow(this)" class='text-red-500 ml-2'>Delete</button>
+                                <button onclick="editRow(this)" class='text-blue-500'><i class="fas fa-edit"></i>​កែប្រែ </button>
+                                <button onclick="deleteRow(this)" class='text-red-500 ml-2'><i class="fas fa-trash"></i>​លុប</button>
                              </td>`;
             document.getElementById('name').value = '';
             document.getElementById('responsibility').value = '';
