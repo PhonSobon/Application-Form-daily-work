@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <title>Application Form</title>
+</head>
+<body class="p-6 bg-gray-100">
+    <div class="max-w-2xl mx-auto bg-white p-6 rounded-lg shadow-md">
+        <h2 class="text-xl font-bold mb-4">Application Form</h2>
+        <input id="name" type="text" placeholder="Name" class="w-full p-2 border rounded mb-2">
+        <textarea id="responsibility" placeholder="Responsibility" class="w-full p-2 border rounded mb-2"></textarea>
+        <input id="other" type="text" placeholder="Other (Optional)" class="w-full p-2 border rounded mb-2">
+        <button onclick="addRow()" class="w-full bg-blue-500 text-white p-2 rounded">Create</button>
+        <p id="message" class="text-red-500 mt-2 hidden">ឈ្មោះនេះមានរួចហើយ</p>
+    </div>
+    <div class="max-w-6xl mx-auto mt-6">
+        <div class="overflow-x-auto">
+            <table class="w-full bg-white rounded shadow-md text-left border border-gray-300">
+                <thead>
+                    <tr class="bg-gray-200 text-lg border-b">
+                        <th class="p-4 border">ID</th>
+                        <th class="p-4 border">Name</th>
+                        <th class="p-4 border">Responsibility</th>
+                        <th class="p-4 border">Other</th>
+                        <th class="p-4 border">Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="tableBody"></tbody>
+            </table>
+        </div>
+        <div class="mt-4 flex gap-2">
+            <button onclick="downloadImage()" class="bg-green-500 text-white p-2 rounded">Download Image</button>
+            <button onclick="downloadPDF()" class="bg-red-500 text-white p-2 rounded">Download PDF</button>
+        </div>
+    </div>
+    <script>
+        let idCounter = 1;
+        function addRow() {
+            let name = document.getElementById('name').value;
+            let responsibility = document.getElementById('responsibility').value;
+            let other = document.getElementById('other').value;
+            let message = document.getElementById('message');
+            
+            if (!name || !responsibility) return alert("Name and Responsibility are required");
+            
+            let tableBody = document.getElementById('tableBody');
+            let existingNames = [...tableBody.getElementsByTagName('td')].map(td => td.innerText);
+            
+            if (existingNames.includes(name)) {
+                message.classList.remove('hidden');
+                return;
+            } else {
+                message.classList.add('hidden');
+            }
+            
+            let row = tableBody.insertRow();
+            row.innerHTML = `<td class='p-4 border'>${idCounter++}</td>
+                             <td class='p-4 border'>${name}</td>
+                             <td class='p-4 border whitespace-pre-wrap'>${responsibility}</td>
+                             <td class='p-4 border'>${other}</td>
+                             <td class='p-4 border'>
+                                <button onclick="editRow(this)" class='text-blue-500'>Edit</button>
+                                <button onclick="deleteRow(this)" class='text-red-500 ml-2'>Delete</button>
+                             </td>`;
+            document.getElementById('name').value = '';
+            document.getElementById('responsibility').value = '';
+            document.getElementById('other').value = '';
+        }
+        function editRow(btn) {
+            let row = btn.parentNode.parentNode;
+            let cells = row.getElementsByTagName("td");
+            document.getElementById('name').value = cells[1].innerText;
+            document.getElementById('responsibility').value = cells[2].innerText;
+            document.getElementById('other').value = cells[3].innerText;
+            row.remove();
+        }
+        function deleteRow(btn) {
+            btn.parentNode.parentNode.remove();
+        }
+        function downloadImage() {
+            html2canvas(document.querySelector("table")).then(canvas => {
+                let link = document.createElement("a");
+                link.href = canvas.toDataURL("image/png");
+                link.download = "application_form.png";
+                link.click();
+            });
+        }
+        function downloadPDF() {
+            let { jsPDF } = window.jspdf;
+            let doc = new jsPDF();
+            html2canvas(document.querySelector("table")).then(canvas => {
+                let imgData = canvas.toDataURL("image/png");
+                doc.addImage(imgData, "PNG", 10, 10, 180, 0);
+                doc.save("application_form.pdf");
+            });
+        }
+    </script>
+</body>
+</html>
