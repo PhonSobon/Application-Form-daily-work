@@ -52,36 +52,58 @@
         let dateValue = '';
 
         function addRow() {
-            let name = document.getElementById('name').value;
-            let responsibility = document.getElementById('responsibility').value;
-            let other = document.getElementById('other').value;
+            let nameInput = document.getElementById('name');
+            let name = nameInput.value;
+            let responsibility = document.getElementById('responsibility').value.trim();
+            let other = document.getElementById('other').value.trim();
             let message = document.getElementById('message');
-            
-            if (!name || !responsibility) return alert("Name and Responsibility are required");
-            
+
+            // Validate required fields
+            if (!name.trim() || !responsibility) {
+                return alert("Name and Responsibility are required");
+            }
+
+            // Check for leading or trailing spaces
+            if (/^\s|\s$/.test(name)) {
+                message.innerText = "ឈ្មោះបញ្ចូលមាន Space នៅខាងមុខ ឬ ខាងក្រោយ។";
+                message.classList.remove('hidden');
+                message.classList.add('text-red-500');
+                return;
+            } else {
+                message.classList.add('hidden');
+            }
+
             let tableBody = document.getElementById('tableBody');
-            let existingNames = [...tableBody.getElementsByTagName('td')].map(td => td.innerText);
             
-            if (existingNames.includes(name)) {
+            // Get existing names (ignoring responsibility)
+            let existingNames = [...tableBody.getElementsByTagName('td')]
+                .filter((td, index) => index % 5 === 1) // Only check name column
+                .map(td => td.innerText.trim());
+
+            if (existingNames.includes(name.trim())) {
+                message.innerText = "ឈ្មោះនេះមានរួចហើយ។";
                 message.classList.remove('hidden');
                 return;
             } else {
                 message.classList.add('hidden');
             }
-            
+
             let row = tableBody.insertRow();
             row.innerHTML = `<td class='p-4 border'>${idCounter++}</td>
-                             <td class='p-4 border'>${name}</td>
-                             <td class='p-4 border whitespace-pre-wrap'>${responsibility}</td>
-                             <td class='p-4 border'>${other}</td>
-                             <td class='p-4 border'>
-                                <button onclick="editRow(this)" class='text-blue-500'><i class="fas fa-edit"></i>​កែប្រែ </button>
-                                <button onclick="deleteRow(this)" class='text-red-500 ml-2'><i class="fas fa-trash"></i>​លុប</button>
-                             </td>`;
-            document.getElementById('name').value = '';
+                            <td class='p-4 border'>${name.trim()}</td>
+                            <td class='p-4 border whitespace-pre-wrap'>${responsibility}</td>
+                            <td class='p-4 border'>${other}</td>
+                            <td class='p-4 border'>
+                                <button onclick="editRow(this)" class='text-blue-500'><i class="fas fa-edit"></i>​ កែប្រែ </button>
+                                <button onclick="deleteRow(this)" class='text-red-500 ml-2'><i class="fas fa-trash"></i>​ លុប</button>
+                            </td>`;
+
+            // Clear input fields
+            nameInput.value = '';
             document.getElementById('responsibility').value = '';
             document.getElementById('other').value = '';
         }
+
 
         function editRow(btn) {
             let row = btn.parentNode.parentNode;
@@ -95,23 +117,69 @@
         function deleteRow(btn) {
             btn.parentNode.parentNode.remove();
         }
+        function hideEditColumn() {
+            document.querySelectorAll("th:last-child, td:last-child").forEach(cell => cell.style.display = "none");
+        }
+
+        function showEditColumn() {
+            document.querySelectorAll("th:last-child, td:last-child").forEach(cell => cell.style.display = "table-cell");
+        }
 
         function downloadImage() {
-            html2canvas(document.querySelector("table")).then(canvas => {
+            let table = document.querySelector("table").cloneNode(true);
+
+            // Remove the last column (កែប្រែ)
+            for (let row of table.rows) {
+                row.deleteCell(-1);
+            }
+
+            // Create a wrapper for the title + table
+            let wrapper = document.createElement("div");
+            let header = document.createElement("h2");
+            header.innerText = "Khmer Heirs Association";
+            header.style.textAlign = "center";
+            header.style.marginBottom = "30px";
+            header.style.fontSize = "25px";
+            wrapper.appendChild(header);
+            wrapper.appendChild(table);
+
+            document.body.appendChild(wrapper);
+
+            html2canvas(wrapper).then(canvas => {
                 let link = document.createElement("a");
                 link.href = canvas.toDataURL("image/png");
-                link.download = "application_form.png";
+                link.download = "khmer_heirs_association.png";
                 link.click();
+                document.body.removeChild(wrapper); // Clean up
             });
         }
+
 
         function downloadPDF() {
             let { jsPDF } = window.jspdf;
             let doc = new jsPDF();
-            html2canvas(document.querySelector("table")).then(canvas => {
+
+            // Set header title
+            doc.setFont("helvetica", "bold");
+            doc.setFontSize(16);
+            doc.text("Khmer Heirs Association", 105, 15, null, null, "center");
+
+            // Clone the table and remove the last column
+            let table = document.querySelector("table").cloneNode(true);
+            for (let row of table.rows) {
+                row.deleteCell(-1); // Remove last column (កែប្រែ)
+            }
+
+            // Create a temporary wrapper to render the table
+            let wrapper = document.createElement("div");
+            wrapper.appendChild(table);
+            document.body.appendChild(wrapper);
+
+            html2canvas(wrapper).then(canvas => {
                 let imgData = canvas.toDataURL("image/png");
-                doc.addImage(imgData, "PNG", 10, 10, 180, 0);
-                doc.save("application_form.pdf");
+                doc.addImage(imgData, "PNG", 10, 25, 180, 0);
+                doc.save("khmer_heirs_association.pdf");
+                document.body.removeChild(wrapper); // Clean up
             });
         }
     </script>
