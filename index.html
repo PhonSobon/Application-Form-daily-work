@@ -17,10 +17,12 @@
 </head>
 <body class="p-6 bg-gray-100">
     <div class="max-w-2xl mx-auto bg-white p-6 rounded-lg shadow-md">
-        <h2 class="text-2xl font-bold mb-4 text-center "><i class="fas fa-file-alt"></i> តារាងវេនសម្អាត</h2>
+        <h2 class="text-2xl font-bold mb-4 text-center"><i class="fas fa-file-alt"></i> តារាងវេនសម្អាត</h2>
+        <!-- <p id="dateDisplay" class="mb-4 text-center text-lg font-semibold">Date: <span id="dateValue">Not Set</span></p> -->
         <input id="name" type="text" placeholder="ឈ្មោះ" class="w-full p-2 border rounded mb-2">
         <textarea id="responsibility" placeholder="តួនាទី​" class="w-full p-2 border rounded mb-2"></textarea>
         <input id="other" type="text" placeholder="ផ្សេង (Optional)" class="w-full p-2 border rounded mb-2">
+        <!-- <input id="date" type="date" class="w-full p-2 border rounded mb-2" onchange="updateDate()"> -->
         <button onclick="addRow()" class="w-full bg-blue-500 text-white p-2 rounded">Create</button>
         <p id="message" class="text-red-500 mt-2 hidden">ឈ្មោះនេះមានរួចហើយ</p>
     </div>
@@ -44,8 +46,11 @@
             <button onclick="downloadPDF()" class="bg-red-500 text-white p-2 rounded"><i class="fas fa-file-pdf"></i> ទាញយកជា PDF</button>
         </div>
     </div>
+
     <script>
         let idCounter = 1;
+        let dateValue = '';
+
         function addRow() {
             let name = document.getElementById('name').value;
             let responsibility = document.getElementById('responsibility').value;
@@ -77,6 +82,7 @@
             document.getElementById('responsibility').value = '';
             document.getElementById('other').value = '';
         }
+
         function editRow(btn) {
             let row = btn.parentNode.parentNode;
             let cells = row.getElementsByTagName("td");
@@ -85,9 +91,11 @@
             document.getElementById('other').value = cells[3].innerText;
             row.remove();
         }
+
         function deleteRow(btn) {
             btn.parentNode.parentNode.remove();
         }
+
         function downloadImage() {
             html2canvas(document.querySelector("table")).then(canvas => {
                 let link = document.createElement("a");
@@ -96,6 +104,7 @@
                 link.click();
             });
         }
+
         function downloadPDF() {
             let { jsPDF } = window.jspdf;
             let doc = new jsPDF();
