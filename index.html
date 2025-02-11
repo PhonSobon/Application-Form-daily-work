@@ -19,7 +19,7 @@
     <div class="max-w-2xl mx-auto bg-white p-6 rounded-lg shadow-md">
         <h2 class="text-2xl font-bold mb-4 text-center"><i class="fas fa-file-alt"></i> តារាងវេនសម្អាត</h2>
         <!-- <p id="dateDisplay" class="mb-4 text-center text-lg font-semibold">Date: <span id="dateValue">Not Set</span></p> -->
-        <input id="name" type="text" placeholder="ឈ្មោះ" class="w-full p-2 border rounded mb-2">
+        <textarea id="name" type="text" placeholder="ឈ្មោះ" class="w-full p-2 border rounded mb-2"></textarea>
         <textarea id="responsibility" placeholder="តួនាទី​" class="w-full p-2 border rounded mb-2"></textarea>
         <input id="other" type="text" placeholder="ផ្សេង (Optional)" class="w-full p-2 border rounded mb-2">
         <!-- <input id="date" type="date" class="w-full p-2 border rounded mb-2" onchange="updateDate()"> -->
@@ -53,58 +53,76 @@
 
         function addRow() {
             let nameInput = document.getElementById('name');
-            let name = nameInput.value;
+            let names = nameInput.value.split('\n').map(name => name.trim()).filter(name => name);
             let responsibility = document.getElementById('responsibility').value.trim();
             let other = document.getElementById('other').value.trim();
-            let message = document.getElementById('message');
-
-            // Validate required fields
-            if (!name.trim() || !responsibility) {
-                return alert("Name and Responsibility are required");
-            }
-
-            // Check for leading or trailing spaces
-            if (/^\s|\s$/.test(name)) {
-                message.innerText = "ឈ្មោះបញ្ចូលមាន Space នៅខាងមុខ ឬ ខាងក្រោយ។";
-                message.classList.remove('hidden');
-                message.classList.add('text-red-500');
-                return;
-            } else {
-                message.classList.add('hidden');
-            }
-
             let tableBody = document.getElementById('tableBody');
-            
-            // Get existing names (ignoring responsibility)
-            let existingNames = [...tableBody.getElementsByTagName('td')]
-                .filter((td, index) => index % 5 === 1) // Only check name column
-                .map(td => td.innerText.trim());
+            let message = document.getElementById('message'); // Error message element
 
-            if (existingNames.includes(name.trim())) {
-                message.innerText = "ឈ្មោះនេះមានរួចហើយ។";
-                message.classList.remove('hidden');
+            if (names.length === 0 || !responsibility) {
+                alert("Name and Responsibility are required");
                 return;
-            } else {
-                message.classList.add('hidden');
             }
 
-            let row = tableBody.insertRow();
-            row.innerHTML = `<td class='p-4 border'>${idCounter++}</td>
-                            <td class='p-4 border'>${name.trim()}</td>
-                            <td class='p-4 border whitespace-pre-wrap'>${responsibility}</td>
-                            <td class='p-4 border'>${other}</td>
-                            <td class='p-4 border'>
-                                <button onclick="editRow(this)" class='text-blue-500'><i class="fas fa-edit"></i>​ កែប្រែ </button>
-                                <button onclick="deleteRow(this)" class='text-red-500 ml-2'><i class="fas fa-trash"></i>​ លុប</button>
-                            </td>`;
+            // Get existing names (case-insensitive)
+            let existingNames = [...tableBody.querySelectorAll("td:nth-child(2)")]
+                .map(td => td.innerText.trim().toLowerCase());
 
-            // Clear input fields
-            nameInput.value = '';
+            let newNames = [];
+
+            // Check for duplicate names
+            for (let name of names) {
+                if (existingNames.includes(name.toLowerCase())) {
+                    message.innerText = `ឈ្មោះ "${name}" មានរួចហើយ!`;
+                    message.classList.remove('hidden');
+                    return;
+                } else {
+                    newNames.push(name);
+                }
+            }
+
+            let rowSpanCount = newNames.length;
+
+            newNames.forEach((name, index) => {
+                let row = tableBody.insertRow();
+                
+                let numberCell = row.insertCell(0);
+                let nameCell = row.insertCell(1);
+                let responsibilityCell = row.insertCell(2);
+                let otherCell = row.insertCell(3);
+                let actionCell = row.insertCell(4);
+
+                numberCell.classList.add('p-4', 'border');
+                nameCell.classList.add('p-4', 'border');
+                responsibilityCell.classList.add('p-4', 'border');
+                otherCell.classList.add('p-4', 'border');
+                actionCell.classList.add('p-4', 'border');
+
+                numberCell.textContent = idCounter++;
+                nameCell.textContent = name;
+
+                if (index === 0) {
+                    responsibilityCell.textContent = responsibility;
+                    responsibilityCell.rowSpan = rowSpanCount; // Merge cells
+                } else {
+                    responsibilityCell.style.display = "none"; // Hide duplicate cells
+                }
+
+                otherCell.textContent = other;
+                actionCell.innerHTML = `
+                    <button onclick="editRow(this)" class='text-blue-500'><i class="fas fa-edit"></i>​ កែប្រែ</button>
+                    <button onclick="deleteRow(this)" class='text-red-500 ml-2'><i class="fas fa-trash"></i>​ លុប</button>
+                `;
+            });
+
+            // Hide error message after successful addition
+            message.classList.add('hidden');
+
+            // Clear inputs
+            document.getElementById('name').value = '';
             document.getElementById('responsibility').value = '';
             document.getElementById('other').value = '';
         }
-
-
         function editRow(btn) {
             let row = btn.parentNode.parentNode;
             let cells = row.getElementsByTagName("td");
