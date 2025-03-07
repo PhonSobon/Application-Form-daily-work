@@ -17,6 +17,7 @@
 </head>
 <body class="p-6 bg-gray-100">
     <div class="max-w-2xl mx-auto bg-white p-6 rounded-lg shadow-md">
+        <img class="" src="logo-kha.jpg" alt="Unknow" style="width: 100px; height: 100px; display: block; margin-top: 0%; margin-bottom: 3%; margin-left: auto; margin-right: auto;">
         <h2 class="text-2xl font-bold mb-4 text-center"><i class="fas fa-file-alt"></i> តារាងវេនសម្អាត</h2>
         <!-- <p id="dateDisplay" class="mb-4 text-center text-lg font-semibold">Date: <span id="dateValue">Not Set</span></p> -->
         <textarea id="name" type="text" placeholder="ឈ្មោះ" class="w-full p-2 border rounded mb-2"></textarea>
@@ -153,11 +154,28 @@
 
             // Create a wrapper for the title + table
             let wrapper = document.createElement("div");
-            let header = document.createElement("h2");
-            header.innerText = "Khmer Heirs Association";
+
+            // Create the header section
+            let header = document.createElement("div");
             header.style.textAlign = "center";
             header.style.marginBottom = "30px";
-            header.style.fontSize = "25px";
+
+            // Create and append the image
+            let img = document.createElement("img");
+            img.src = "logo-kha.jpg";
+            img.alt = "Unknown";
+            img.style.width = "100px";
+            img.style.height = "100px";
+            img.style.display = "block";
+            img.style.margin = "0 auto 2% auto";
+            header.appendChild(img);
+
+            // Create and append the title
+            let title = document.createElement("h2");
+            title.innerText = "Khmer Heirs Association";
+            title.style.fontSize = "25px";
+            header.appendChild(title);
+
             wrapper.appendChild(header);
             wrapper.appendChild(table);
 
@@ -168,38 +186,51 @@
                 link.href = canvas.toDataURL("image/png");
                 link.download = "khmer_heirs_association.png";
                 link.click();
-                document.body.removeChild(wrapper); // Clean up
+                document.body.removeChild(wrapper);
             });
         }
-
 
         function downloadPDF() {
-            let { jsPDF } = window.jspdf;
-            let doc = new jsPDF();
+    let { jsPDF } = window.jspdf;
+    let doc = new jsPDF();
 
-            // Set header title
-            doc.setFont("helvetica", "bold");
-            doc.setFontSize(16);
-            doc.text("Khmer Heirs Association", 105, 15, null, null, "center");
+    // Load the image
+    let img = new Image();
+    img.src = "logo-kha.jpg";
+    img.onload = function () {
+        let imgWidth = 30; // Set the desired image width
+        let imgHeight = 30; // Set the desired image height
+        let pageWidth = doc.internal.pageSize.width; // Get the page width
+        let centerX = (pageWidth - imgWidth) / 2; // Calculate center position
 
-            // Clone the table and remove the last column
-            let table = document.querySelector("table").cloneNode(true);
-            for (let row of table.rows) {
-                row.deleteCell(-1); // Remove last column (កែប្រែ)
-            }
+        // Add the image centered
+        doc.addImage(img, "JPEG", centerX, 10, imgWidth, imgHeight);
 
-            // Create a temporary wrapper to render the table
-            let wrapper = document.createElement("div");
-            wrapper.appendChild(table);
-            document.body.appendChild(wrapper);
+        // Set header title below the image
+        doc.setFont("helvetica", "bold");
+        doc.setFontSize(16);
+        doc.text("Khmer Heirs Association", pageWidth / 2, 50, { align: "center" });
 
-            html2canvas(wrapper).then(canvas => {
-                let imgData = canvas.toDataURL("image/png");
-                doc.addImage(imgData, "PNG", 10, 25, 180, 0);
-                doc.save("khmer_heirs_association.pdf");
-                document.body.removeChild(wrapper); // Clean up
-            });
+        // Clone the table and remove the last column
+        let table = document.querySelector("table").cloneNode(true);
+        for (let row of table.rows) {
+            row.deleteCell(-1); // Remove last column
         }
+
+        // Create a temporary wrapper to render the table
+        let wrapper = document.createElement("div");
+        wrapper.appendChild(table);
+        document.body.appendChild(wrapper);
+
+        html2canvas(wrapper).then(canvas => {
+            let imgData = canvas.toDataURL("image/png");
+            doc.addImage(imgData, "PNG", 10, 90, 190, 0); // Adjusted Y-axis for table placement
+            doc.save("khmer_heirs_association.pdf");
+            document.body.removeChild(wrapper); // Clean up
+        });
+    };
+}
+
     </script>
 </body>
 </html>
